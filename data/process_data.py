@@ -25,7 +25,7 @@ def load_data(messages_filepath, categories_filepath):
 
 def clean_data(df):
     "Perform the cleaning operations of df"
-    
+
     # create separate columns for each categories values
     categories = df.categories.str.split(';', expand=True)
 
@@ -52,7 +52,7 @@ def save_data(df, database_filename):
     """Save the table df in a sqlite database"""
 
     engine = create_engine(f'sqlite:///{database_filename}')
-    df.to_sql('messages', engine, index=False)
+    df.to_sql('messages', engine, index=False, if_exists='replace')
 
 
 def main():
