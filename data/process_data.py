@@ -41,6 +41,16 @@ def clean_data(df):
         # convert column from string to numeric
         categories[column] = categories[column].astype('int64')
 
+    # the output column "related" has 3 possible outcomes (0, 1, 2)
+    # it must be converted to {0; 1} like the others
+    categories.replace(2, 1, inplace=True)
+
+    # the output column "child_alone" has just 1 possible outcomes (0),
+    # so it doens't make sense to keep it in the model because it cannot
+    # be trained to learn how to classify this category without positive
+    # cases. It will be dropped out until we have cases to train a classifier
+    categories.drop('child_alone', axis=1, inplace=True)
+
     # substitute the original categories column in df with the new columns
     df.drop('categories', axis=1, inplace=True)
     df = pd.concat([df, categories], axis=1)

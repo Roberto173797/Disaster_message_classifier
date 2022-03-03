@@ -31,10 +31,6 @@ def load_data(database_filepath):
     X = df.loc[:, "message"]
     Y = df.iloc[:, 4:]
 
-    # the output column "related" has 3 possible outcomes (0, 1, 2)
-    Y.replace(2, 1, inplace=True)
-    # the output column "child_alone" has just 1 possible outcomes (0)
-    Y.drop('child_alone', axis=1, inplace=True)
     category_names = Y.columns
     return X.values, Y.values, category_names
 
