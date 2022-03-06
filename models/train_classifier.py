@@ -55,7 +55,8 @@ def build_model():
 
     # Classification model
     cls_model = MultiOutputClassifier(
-        estimator=GradientBoostingClassifier(random_state=123)
+        estimator=SGDClassifier(random_state=123,
+                                class_weight='balanced')
     )
 
     pipeline = Pipeline([
@@ -72,11 +73,10 @@ def build_model():
         'tfidfvec__smooth_idf': [True, False],
         'tfidfvec__ngram_range': [(1, 1), (1, 2)],
         'tsvd__n_components': [300, 400, 450],
-        'cls__estimator__learning_rate': [0.1, 0.01, 0.001],
-        'cls__estimator__loss': ['deviance', 'exponential'],
-        'cls__estimator__min_samples_leaf': np.arange(2, 20, 2),
-        'cls__estimator__max_depth': np.arange(2, 6, 1),
-        'cls__estimator__validation_fraction': np.arange(0.1, 0.5, 0.05)
+        'cls__estimator__alpha': [0.01, 0.001, 0.0001],
+        'cls__estimator__loss': ['hinge', 'log'],
+        'cls__estimator__l1_ratio': np.arange(0, 1.05, 0.05),
+        'cls__estimator__validation_fraction': np.arange(0.3, 0.5, 0.05)
     }
 
     cv = RandomizedSearchCV(
@@ -94,7 +94,7 @@ def build_model():
         # a model with 'class_weight = balanced' which takes the class
         # inbalance into account, but I haven't tried it.
         scoring='f1_weighted',
-        cv=3,
+        cv=5,
         verbose=3,
         random_state=123,
         n_jobs=-1)
@@ -161,7 +161,7 @@ def main():
         print('Please provide the filepath of the disaster messages database '\
               'as the first argument and the filepath of the pickle file to '\
               'save the model to as the second argument. \n\nExample: python '\
-              'train_classifier.py ../data/DisasterResponse.db classifier.pkl')
+              'train_classifier.py ../data/messages_db.db classifier.pkl')
 
 
 if __name__ == '__main__':
